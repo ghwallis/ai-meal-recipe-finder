@@ -1,4 +1,4 @@
-# WasawasaCulinary 🍳
+# WasaWasa Culinary 🍳
 
 A smart recipe assistant powered by AWS, Spoonacular, and Google APIs. Discover recipes, locate nearby restaurants, and learn cooking tips seamlessly in one platform.
 
@@ -72,8 +72,8 @@ A smart recipe assistant powered by AWS, Spoonacular, and Google APIs. Discover 
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/wasawasaculinary.git
-   cd culinarycompass
+   git clone https://github.com/ghwallis/wasawasaculinary.git
+   cd wasawasaculinary
    ```
 
 2. **Install Dependencies**:
