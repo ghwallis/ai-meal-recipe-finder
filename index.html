@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WasaWasa Culinary - Your Smart Recipe Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1001.0.min.js"></script>
+  <script>
+    // Load environment variables
+    const ENV = {
+      AWS_ACCESS_KEY_ID: 'your-access-key-id',
+      AWS_SECRET_ACCESS_KEY: 'your-secret-access-key',
+      AWS_REGION: 'your-region',
+      SPOONACULAR_API_KEY: 'your-spoonacular-api-key',
+      GOOGLE_VISION_API_KEY: 'your-google-vision-api-key'
+    };
+  </script>
+  <script>
+    function testAWSConnection() {
+      console.log('Testing AWS connection...');
+      const dynamoDB = new AWS.DynamoDB.DocumentClient();
+      dynamoDB.scan({
+        TableName: 'recipes-cache',
+        Limit: 1
+      }).promise()
+        .then(result => console.log('AWS Connection successful:', result))
+        .catch(error => console.error('AWS Connection error:', error));
+    }
+  </script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="main-nav">
+    <div class="nav-content">
+      <div class="logo">
+        <i class="fas fa-utensils"></i>
+        <span>CulinaryCompass</span>
+      </div>
+      <div class="nav-links">
+        <a href="#" class="active">Home</a>
+        <a href="#">Recipes</a>
+        <a href="#">Popular</a>
+        <a href="#">Cuisines</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Discover Your Next Favorite Recipe</h1>
+      <p class="tagline">Search by ingredients, meal name, or upload a photo to find the perfect recipe</p>
+      <div class="search-bar">
+        <input type="text" placeholder="Search recipes, ingredients, or dishes..." id="globalSearch">
+        <button><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+  </header>
+  
+  <main class="container">
+    <!-- Featured Sections Grid -->
+    <div class="features-grid">
+      <!-- Ingredient Search Section -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-carrot"></i>
+        </div>
+        <h2>Search by Ingredients</h2>
+        <p>Have ingredients but not sure what to cook?</p>
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="ingredientInput" 
+            placeholder="Enter ingredients (comma separated)"
+          >
+          <button id="findRecipesButton">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <div class="helper-text">Example: chicken, tomatoes, pasta</div>
+      </div>
+
+      <!-- Meal Name Search Section -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h2>Find a Recipe</h2>
+        <p>Looking for something specific?</p>
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="mealNameInput" 
+            placeholder="Enter a meal name"
+          >
+          <button id="findMealButton">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <div class="helper-text">Example: Pasta Carbonara, Chicken Curry</div>
+      </div>
+
+      <!-- Image Upload Section -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-camera"></i>
+        </div>
+        <h2>Identify from Photo</h2>
+        <p>See a dish you like? Let's find it!</p>
+        <div class="upload-area" id="uploadArea">
+          <input 
+            type="file" 
+            id="mealImageInput" 
+            accept="image/*"
+            hidden
+          >
+          <div class="upload-placeholder">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Drop image here or click to upload</p>
+          </div>
+        </div>
+        <button id="identifyMealButton" class="action-button">
+          <i class="fas fa-magic"></i> Identify Meal
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="recipeResults"></div>
+
+    <!-- Trending Section -->
+    <section class="trending-section">
+      <h2>Trending Now <i class="fas fa-fire"></i></h2>
+      <div class="trending-grid">
+        <!-- Trending items will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Quick Tips Section -->
+    <section class="tips-section">
+      <h2>Cooking Tips & Tricks</h2>
+      <div class="tips-carousel">
+        <!-- Tips will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Add this section in the web-results-container -->
+    <div class="nearby-restaurants-section">
+      <h3>Find This Dish Nearby</h3>
+      <div class="location-search">
+        <input 
+          type="text" 
+          id="locationInput" 
+          placeholder="Enter your location or use current location"
+        >
+        <button id="useCurrentLocation">
+          <i class="fas fa-location-arrow"></i>
+        </button>
+      </div>
+      <div id="map"></div>
+      <div id="restaurantsList" class="restaurants-list">
+        <!-- Restaurants will be populated here -->
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h3>CulinaryCompass</h3>
+          <p>Discover, cook, and enjoy amazing recipes</p>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-pinterest"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Popular Recipes</a></li>
+            <li><a href="#">Meal Planning</a></li>
+            <li><a href="#">Cooking Guides</a></li>
+            <li><a href="#">Seasonal</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="#">Breakfast</a></li>
+            <li><a href="#">Main Dishes</a></li>
+            <li><a href="#">Desserts</a></li>
+            <li><a href="#">Healthy</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
