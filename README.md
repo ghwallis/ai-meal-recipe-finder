@@ -75,7 +75,7 @@ Explore recipes based on ingredients you have, identify meals from photos, and d
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/your-repo/wasawasaculinary.git
-   cd culinarycompass
+   cd wasawasaculinary
    ```
 
 2. **Install Dependencies**:
