@@ -10,6 +10,12 @@ Explore recipes based on ingredients you have, identify meals from photos, and d
 
 ![AWS Architecture](https://github.com/user-attachments/assets/a571fd78-ab4a-4030-95f5-01c198038c2b)
 
+
+# Video Demonstration
+
+[![Watch the video](https://user-images.githubusercontent.com/85625c3c-2ebd-4545-8f7d-b78752ca7612)](https://github.com/user-attachments/assets/85625c3c-2ebd-4545-8f7d-b78752ca7612)
+
+
 ### Components
 - **Frontend**:
   - Static website hosted on S3
